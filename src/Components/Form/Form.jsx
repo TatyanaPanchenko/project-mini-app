@@ -19,10 +19,14 @@ export default function Form() {
   };
   const getDataForm = (e) => {
     e.preventDefault();
-    const madeFilter = filterEvents(time);
-    madeFilter.then((result) => {
-      setEvents(result);
-    });
+    if (tg.initDate) {
+      const madeFilter = filterEvents(time);
+      madeFilter.then((result) => {
+        setEvents(result);
+      });
+    } else {
+      console.log("no");
+    }
   };
 
   return (

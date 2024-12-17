@@ -13,9 +13,9 @@ export const getData = () => {
 };
 
 export const filterEvents = async (time) => {
-  const events = Services.getRecomendations();
-  console.log(events);
-  const eventsData = await getData();
+  const eventsData = await Services.getRecomendations();
+  console.log(eventsData);
+  // const eventsData = await getData();
   console.log(eventsData);
   console.log(time);
   const currentTime = new Date().getTime();
