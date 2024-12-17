@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { initializeApp } from "firebase/app";
-import firebaseConfig from "./firebaseConfig.js/";
+import { firebaseConfig } from "./firebaseConfig";
 import App from "./App";
 
 const app = initializeApp(firebaseConfig);

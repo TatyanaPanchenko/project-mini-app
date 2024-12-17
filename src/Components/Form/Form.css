@@ -1,15 +1,28 @@
 .form {
-display:flex;
-flex-direction:column;
-width:100%;
-padding:20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* width: 100%; */
+	padding: 50px;
 }
+
+.title {
+	font-size: 18px;
+	text-align: center;
+}
+
 .input {
-width:100%;
-padding:10px;
-margin-top:15px;
+	width: 100%;
+	padding: 10px;
+	margin-top: 15px;
 }
+
 .select {
-padding:10px;
-margin-top:15px;
+	padding: 10px;
+	margin-top: 15px;
+}
+
+option {
+
+	outline: none;
 }

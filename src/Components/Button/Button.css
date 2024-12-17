@@ -2,7 +2,9 @@
   padding: 16px 20px;
   background: var(--tg-theme-button-color);
   color: var(--tg-theme-text-color);
-  bottom: none;
   outline: none;
+  border: 0;
+  border-color: var(--tg-theme-button-color);
   cursor: pointer;
+  width: 100%;
 }
