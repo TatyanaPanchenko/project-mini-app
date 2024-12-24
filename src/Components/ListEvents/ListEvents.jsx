@@ -5,16 +5,25 @@ export default function ListEvents({ events }) {
   return (
     <>
       {events.map((item, index) => {
-        const { name, title, description, date, location } = item;
+        const {
+          content,
+          image,
+          start,
+          title,
+          locationAddress,
+          description,
+          date,
+          location,
+        } = item;
         return (
           <div className={"events"} key={index}>
             <div className={"image"}>
-              <img src={`./assets/${name}.jpg`} alt={name} />
+              <img src={image} alt={title} />
             </div>
             <div className={"title"}>{title} </div>
-            <div className={"description"}> {description}</div>
-            <div className={"date"}>{date} </div>
-            <div className={"location"}>{location} </div>
+            <div className={"description"}> {content}</div>
+            <div className={"date"}>{start} </div>
+            <div className={"location"}>{locationAddress} </div>
           </div>
         );
       })}

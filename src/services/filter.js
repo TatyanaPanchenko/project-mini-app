@@ -13,25 +13,36 @@ export const getData = () => {
 };
 
 export const filterEvents = async (time) => {
+  Services.getAuth();
   const eventsData = await Services.getRecomendations();
   console.log(eventsData);
-  // const eventsData = await getData();
-  console.log(eventsData);
-  console.log(time);
-  const currentTime = new Date().getTime();
-  const rangeEvents = currentTime + Number(time) * 1000 * 60 * 60;
+
   const arrEvents = [];
   console.log(arrEvents);
   eventsData.forEach((item) => {
-    const eventTime = new Date(item.date).getTime();
+    // const date = item.original.match(/\d{2}(\D)\d{2}\1\d{4}/g);
+    // const hours = item.original.match(/\b[0-2]?\d:[0-5]\d\b/);
+    const eventTime = new Date(item.start).getTime();
+    const currentTime = new Date().getTime();
+    const rangeEvents = currentTime + Number(time) * 1000 * 60 * 60;
+    console.log(item.start);
     console.log(rangeEvents);
     console.log(eventTime);
     console.log(currentTime);
+    console.log(Number(time));
+    console.log(arrEvents);
     if (rangeEvents > eventTime && eventTime > currentTime) {
-      console.log(item.date);
       arrEvents.push(item);
     }
+    console.log(arrEvents);
   });
-  console.log(arrEvents);
   return arrEvents;
+
+  // const eventsData = await getData();
+  // console.log(time);
+
+  // console.log(arrEvents);
+
+  // console.log(arrEvents);
+  // return arrEvents;
 };
