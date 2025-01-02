@@ -13,10 +13,10 @@ export const getData = () => {
 };
 
 export const filterEvents = async (time) => {
+  console.log(time);
   Services.getAuth();
   const eventsData = await Services.getRecomendations();
   console.log(eventsData);
-
   const arrEvents = [];
   console.log(arrEvents);
   eventsData.forEach((item) => {
@@ -26,9 +26,9 @@ export const filterEvents = async (time) => {
     const currentTime = new Date().getTime();
     const rangeEvents = currentTime + Number(time) * 1000 * 60 * 60;
     console.log(item.start);
-    console.log(rangeEvents);
-    console.log(eventTime);
-    console.log(currentTime);
+    console.log(new Date(rangeEvents));
+    console.log(new Date(eventTime));
+    console.log(new Date(currentTime));
     console.log(Number(time));
     console.log(arrEvents);
     if (rangeEvents > eventTime && eventTime > currentTime) {
