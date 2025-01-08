@@ -12,7 +12,7 @@ export const getData = () => {
   return result;
 };
 
-export const filterEvents = async (time) => {
+export const filterEvents = async (time, location) => {
   console.log(time);
   Services.getAuth();
   const eventsData = await Services.getRecomendations();
@@ -25,16 +25,41 @@ export const filterEvents = async (time) => {
     const eventTime = new Date(item.start).getTime();
     const currentTime = new Date().getTime();
     const rangeEvents = currentTime + Number(time) * 1000 * 60 * 60;
-    console.log(item.start);
-    console.log(new Date(rangeEvents));
-    console.log(new Date(eventTime));
-    console.log(new Date(currentTime));
-    console.log(Number(time));
-    console.log(arrEvents);
-    if (rangeEvents > eventTime && eventTime > currentTime) {
-      arrEvents.push(item);
+    // console.log(item.start);
+    // console.log(new Date(rangeEvents));
+    // console.log(new Date(eventTime));
+    // console.log(new Date(currentTime));
+    // console.log(Number(time));
+    // console.log(arrEvents);
+    const currentLongitude = item.lon;
+    const currentLatitude = item.lat;
+    console.log(location);
+    if (location) {
+      const findDelta = (degrees) => {
+        return (Math.PI / 180) * 6371210 * Math.cos((degrees * Math.PI) / 180);
+      };
+      const deltaLatitude = 5000 / findDelta(location.latitude);
+      const deltaLongitude = 5000 / findDelta(location.longitude);
+      console.log(`Location is ${location.longitude} - ${deltaLatitude}`);
+      if (
+        eventTime < rangeEvents &&
+        eventTime > currentTime &&
+        currentLongitude < currentLongitude + deltaLongitude &&
+        currentLatitude < currentLatitude + deltaLatitude
+      ) {
+        console.log("Данные получены");
+        arrEvents.push(item);
+      }
+    } else {
+      if (eventTime < rangeEvents && eventTime > currentTime) {
+        console.log("Данные получены без геолокации");
+        arrEvents.push(item);
+      } else {
+        console.log("Данные не получены");
+      }
     }
     console.log(arrEvents);
+    return arrEvents;
   });
   return arrEvents;
 
@@ -46,3 +71,14 @@ export const filterEvents = async (time) => {
   // console.log(arrEvents);
   // return arrEvents;
 };
+
+// export const chooseLocation = (location) => {
+//   if (location) {
+//     const findDelta = (degrees) => {
+//       return (Math.PI / 180) * 6371210 * Math.cos((degrees * Math.PI) / 180);
+//     };
+//     const deltaLatitude = 5000 / findDelta(location.latitude);
+//     const deltaLongitude = 5000 / findDelta(location.longitude);
+//     console.log(`Location is ${location.longitude} - ${findLongitude}`);
+//   }
+// };

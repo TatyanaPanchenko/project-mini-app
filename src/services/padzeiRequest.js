@@ -25,7 +25,7 @@ export default class Services {
       return await response.json();
     } catch (e) {
       console.error(e);
-      return "<div>Сервер недоступен</div>";
+      console.log("Сервер недоступен");
     }
   }
 

@@ -3,7 +3,7 @@
 	flex-direction: column;
 	gap: 20px;
 	/* width: 100%; */
-	padding: 50px 0;
+	padding: 20px 0 50px;
 	align-items: center;
 
 }
@@ -11,6 +11,7 @@
 .title {
 	font-size: 18px;
 	text-align: center;
+	color: #777;
 }
 
 .select {
@@ -24,7 +25,6 @@
 	background-repeat: no-repeat;
 	background-position: 95% center;
 	background-size: 12px;
-
 }
 
 option {
