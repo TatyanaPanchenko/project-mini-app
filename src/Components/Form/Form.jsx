@@ -5,13 +5,16 @@ import "./Form.css";
 import Button from "../Button/Button";
 import Spinner from "../Spinner/Spinner";
 import ListEvents from "../ListEvents/ListEvents";
+import SelectHoroscope from "../SelectHoroscope/SelectHoroscope";
+import { Select, Checkbox, ConfigProvider } from "antd";
 import { getData, filterEvents } from "../../services/filter";
 
 export default function Form() {
   const [time, setTime] = useState("2");
   const [events, setEvents] = useState([]);
   const [waiting, setWaiting] = useState(false);
-
+  const [horoscope, setHoroscope] = useState(false);
+  console.log(horoscope);
   const { tg } = useTelegram();
   const user = tg.initDataUnsafe.user;
   // console.log(navigator);
@@ -21,10 +24,10 @@ export default function Form() {
   };
 
   // console.log(tg.LocationManager.isInited);
-  tg.LocationManager.init((LocationData) => {
-    LocationData.getLocation();
-    console.log(tg.LocationManager.getLocation(LocationData));
-  });
+  // tg.LocationManager.init((LocationData) => {
+  //   LocationData.getLocation();
+  //   console.log(tg.LocationManager.getLocation(LocationData));
+  // });
   // console.log(tg.LocationManager.isInited);
 
   useEffect(() => {
@@ -41,8 +44,8 @@ export default function Form() {
   //   return userLocation;
   // }
 
-  const onChangeTime = (e) => {
-    console.log(e.target.value);
+  const onChangeTime = (value) => {
+    console.log(value);
     setWaiting(true);
     if ("geolocation" in navigator) {
       const watchId = navigator.geolocation.watchPosition(
@@ -54,7 +57,7 @@ export default function Form() {
           };
           if (user) {
             console.log("Геолокация получена");
-            const madeFilter = filterEvents(e.target.value, location);
+            const madeFilter = filterEvents(value, location);
             madeFilter.then((result) => {
               console.log(result);
               setEvents(result);
@@ -62,6 +65,7 @@ export default function Form() {
             });
           } else {
             console.log("no user");
+            setWaiting(false);
           }
           // chooseLocation(location);
           // return location;
@@ -87,7 +91,7 @@ export default function Form() {
       console.error("Геолокация недоступна в этом браузере.");
       if (user) {
         console.log("Геолокация не получена");
-        const madeFilter = filterEvents(e.target.value);
+        const madeFilter = filterEvents(value);
         madeFilter.then((result) => {
           console.log(result);
           setEvents(result);
@@ -99,7 +103,15 @@ export default function Form() {
     }
     console.log(events);
   };
-
+  const getHoroscope = () => {
+    if (!horoscope) {
+      setHoroscope(true);
+      console.log(`horoscope изменен на ${horoscope}`);
+    } else if (horoscope) {
+      console.log(`horoscope изменен на ${horoscope}`);
+      setHoroscope(false);
+    }
+  };
   // const getDataForm = (e) => {
   //   e.preventDefault();
   // if (user) {
@@ -116,38 +128,50 @@ export default function Form() {
 
   return (
     <>
-      <form className={"form"}>
+      <form className={"form-time"}>
         <div className={"title"}>
           Выберите время, в течении которого хотите найти ивент:
         </div>
-        <select onChange={onChangeTime} className={"select"}>
-          <option value={"2"}>2 часа</option>
-          <option value={"4"}>4 часа</option>
-          <option value={"8"}>8 часов</option>
-          <option value={"24"}>весь день</option>
-          <option value={"48"}>завтра</option>
-        </select>
-        {/* <Button>Найти ивент</Button> */}
+
+        <ConfigProvider
+          theme={{
+            components: {
+              Select: {
+                activeBorderColor: "none",
+                hoverBorderColor: "none",
+              },
+            },
+          }}
+        >
+          <Select
+            className="time-select"
+            placeholder="4 часа"
+            onChange={onChangeTime}
+          >
+            <Select.Option value="4">4 часа</Select.Option>
+            <Select.Option value="8">8 часов</Select.Option>
+            <Select.Option value="12">12 часов</Select.Option>
+            <Select.Option value="24">Весь день</Select.Option>
+            <Select.Option value="480">Завтра</Select.Option>
+          </Select>
+        </ConfigProvider>
       </form>
-      <form className={"form"}>
-        <div className={"title"}>
-          Выберите свой знак задиака, чтобы подобрать подходящие ивенты:
-        </div>
-        <select className={"select"}>
-          <option value={"Other"}>Не выбран</option>
-          <option value={"Aries"}>Овен</option>
-          <option value={"Taurus"}>Телец</option>
-          <option value={"Gemini"}>Близнецы</option>
-          <option value={"Cancer"}>Рак</option>
-          <option value={"Leo"}>Лев</option>
-          <option value={"Virgo"}>Дева</option>
-          <option value={"Libra"}>Весы</option>
-          <option value={"Scorpio"}>Скорпион</option>
-          <option value={"Sagittarius"}>Стрелец</option>
-          <option value={"Capricorn"}>Козерог</option>
-          <option value={"Aquarius"}>Водолей</option>
-          <option value={"Pisces"}>Рыбы</option>
-        </select>
+      <form className={"form-horoscope"}>
+      
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "#ccc",
+                controlInteractiveSize:20
+              },
+            }}
+          >
+            <Checkbox className={"checkbox-horoscope"} onChange={getHoroscope}>  Подобрать активности по гороскопу</Checkbox>
+          </ConfigProvider>
+          {/* <input type="checkbox" className="checkbox-horoscope" /> */}
+          {/* <span> Подобрать подходящие активности по гороскопу</span> */}
+      
+        {horoscope ? <SelectHoroscope /> : null}
       </form>
       {/* <Button>Найти ивент</Button> */}
 

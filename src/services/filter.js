@@ -4,17 +4,17 @@ import Services from "./padzeiRequest";
 // const data = getData();
 // console.log(data);
 
-export const getData = () => {
-  const dataFB = getDataFB();
-  const result = dataFB.then((response) => {
-    return response.events;
-  });
-  return result;
-};
+// export const getData = () => {
+//   const dataFB = getDataFB();
+//   const result = dataFB.then((response) => {
+//     return response.events;
+//   });
+//   return result;
+// };
 
 export const filterEvents = async (time, location) => {
   console.log(time);
-  Services.getAuth();
+  // Services.getAuth();
   const eventsData = await Services.getRecomendations();
   console.log(eventsData);
   const arrEvents = [];
@@ -31,32 +31,40 @@ export const filterEvents = async (time, location) => {
     // console.log(new Date(currentTime));
     // console.log(Number(time));
     // console.log(arrEvents);
-    const currentLongitude = item.lon;
-    const currentLatitude = item.lat;
+    const itemLongitude = item.lon;
+    const itemLatitude = item.lat;
     console.log(location);
     if (location) {
       const findDelta = (degrees) => {
         return (Math.PI / 180) * 6371210 * Math.cos((degrees * Math.PI) / 180);
       };
+      const currentLongitude = location.longitude;
+      const currentLatitude = location.latitude;
       const deltaLatitude = 5000 / findDelta(location.latitude);
       const deltaLongitude = 5000 / findDelta(location.longitude);
-      console.log(`Location is ${location.longitude} - ${deltaLatitude}`);
+      console.log(
+        `My location is ${currentLongitude}-${currentLatitude}, локация объекта - ${itemLongitude}- ${itemLatitude}`
+      );
       if (
         eventTime < rangeEvents &&
         eventTime > currentTime &&
-        currentLongitude < currentLongitude + deltaLongitude &&
-        currentLatitude < currentLatitude + deltaLatitude
+        currentLongitude < itemLongitude + deltaLongitude &&
+        currentLongitude > itemLongitude - deltaLongitude &&
+        currentLatitude < itemLatitude + deltaLatitude &&
+        currentLatitude > itemLatitude - deltaLatitude
       ) {
-        console.log("Данные получены");
+        console.log(
+          `Данные получены, текущая геолокация ${location.longitude} - ${location.latitude},  геолокация объекта  ${currentLongitude} - ${currentLatitude}`
+        );
         arrEvents.push(item);
       }
     } else {
-      if (eventTime < rangeEvents && eventTime > currentTime) {
-        console.log("Данные получены без геолокации");
-        arrEvents.push(item);
-      } else {
-        console.log("Данные не получены");
-      }
+      // if (eventTime < rangeEvents && eventTime > currentTime) {
+      //   console.log("Данные получены без геолокации");
+      //   arrEvents.push(item);
+      // } else {
+      //   console.log("Данные не получены");
+      // }
     }
     console.log(arrEvents);
     return arrEvents;

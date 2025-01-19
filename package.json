@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@telegram-apps/sdk": "^2.11.0",
+    "antd": "^5.23.1",
     "cra-template": "1.2.0",
     "firebase": "^11.0.2",
     "react": "^19.0.0",
