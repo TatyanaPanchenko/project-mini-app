@@ -14,6 +14,8 @@ export default function Form() {
   const [events, setEvents] = useState([]);
   const [waiting, setWaiting] = useState(false);
   const [horoscope, setHoroscope] = useState(false);
+  const [location, setLocation] = useState({});
+  console.log(location);
   console.log(horoscope);
   const { tg } = useTelegram();
   const user = tg.initDataUnsafe.user;
@@ -31,7 +33,7 @@ export default function Form() {
   // console.log(tg.LocationManager.isInited);
 
   useEffect(() => {
-    filterEvents("2").then((result) => {
+    filterEvents("4").then((result) => {
       setEvents(result);
     });
   }, []);
@@ -44,65 +46,66 @@ export default function Form() {
   //   return userLocation;
   // }
 
+  if ("geolocation" in navigator) {
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        // const location = {
+        //   latitude: position.coords.latitude,
+        //   longitude: position.coords.longitude,
+        //   accuracy: position.coords.accuracy,
+        // };
+      },
+      (error) => {
+        console.error("Ошибка получения геолокации:", error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000,
+      }
+    );
+
+    // Остановить отслеживание при необходимости
+    // navigator.geolocation.clearWatch(watchId);
+  } else {
+    console.error("Геолокация недоступна в этом браузере.");
+    // if (user) {
+    //   console.log("Геолокация не получена");
+    //   const madeFilter = filterEvents(value);
+    //   madeFilter.then((result) => {
+    //     console.log(result);
+    //     setEvents(result);
+    //     setWaiting(false);
+    //   });
+    // } else {
+    //   console.log("no user");
+    // }
+  }
+
   const onChangeTime = (value) => {
     console.log(value);
     setWaiting(true);
-    if ("geolocation" in navigator) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-          };
-          if (user) {
-            console.log("Геолокация получена");
-            const madeFilter = filterEvents(value, location);
-            madeFilter.then((result) => {
-              console.log(result);
-              setEvents(result);
-              setWaiting(false);
-            });
-          } else {
-            console.log("no user");
-            setWaiting(false);
-          }
-          // chooseLocation(location);
-          // return location;
-          // console.log("Текущее местоположение:", {
-          //   latitude: position.coords.latitude,
-          //   longitude: position.coords.longitude,
-          //   accuracy: position.coords.accuracy,
-          // });
-        },
-        (error) => {
-          console.error("Ошибка получения геолокации:", error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 5000,
-        }
-      );
 
-      // Остановить отслеживание при необходимости
-      // navigator.geolocation.clearWatch(watchId);
+    if (user) {
+           const madeFilter = filterEvents(value, location);
+      madeFilter.then((result) => {
+        console.log(result);
+        setEvents(result);
+        setWaiting(false);
+      });
     } else {
-      console.error("Геолокация недоступна в этом браузере.");
-      if (user) {
-        console.log("Геолокация не получена");
-        const madeFilter = filterEvents(value);
-        madeFilter.then((result) => {
-          console.log(result);
-          setEvents(result);
-          setWaiting(false);
-        });
-      } else {
-        console.log("no user");
-      }
+      console.log("no user");
+      setWaiting(false);
     }
+
     console.log(events);
   };
+
+
   const getHoroscope = () => {
     if (!horoscope) {
       setHoroscope(true);
@@ -152,25 +155,27 @@ export default function Form() {
             <Select.Option value="8">8 часов</Select.Option>
             <Select.Option value="12">12 часов</Select.Option>
             <Select.Option value="24">Весь день</Select.Option>
-            <Select.Option value="480">Завтра</Select.Option>
+            <Select.Option value="480">Включая завтра</Select.Option>
           </Select>
         </ConfigProvider>
       </form>
       <form className={"form-horoscope"}>
-      
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: "#ccc",
-                controlInteractiveSize:20
-              },
-            }}
-          >
-            <Checkbox className={"checkbox-horoscope"} onChange={getHoroscope}>  Подобрать активности по гороскопу</Checkbox>
-          </ConfigProvider>
-          {/* <input type="checkbox" className="checkbox-horoscope" /> */}
-          {/* <span> Подобрать подходящие активности по гороскопу</span> */}
-      
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#ccc",
+              controlInteractiveSize: 20,
+            },
+          }}
+        >
+          <Checkbox className={"checkbox-horoscope"} onChange={getHoroscope}>
+            {" "}
+            Подобрать активности по гороскопу
+          </Checkbox>
+        </ConfigProvider>
+        {/* <input type="checkbox" className="checkbox-horoscope" /> */}
+        {/* <span> Подобрать подходящие активности по гороскопу</span> */}
+
         {horoscope ? <SelectHoroscope /> : null}
       </form>
       {/* <Button>Найти ивент</Button> */}
