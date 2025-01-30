@@ -19,7 +19,7 @@ export default class Services {
     try {
       const response = await fetch(
         // "https://api.padzei.com/recommendations/50?initial=true"
-        "https://api.padzei.com/recommendations-test/5/911?initial=true"
+        "https://api.padzei.com/recommendations-test/500/911?initial=true"
       );
       console.log(response);
       return await response.json();

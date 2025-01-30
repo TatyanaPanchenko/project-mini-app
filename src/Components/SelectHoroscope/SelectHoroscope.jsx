@@ -15,6 +15,7 @@ export default function SelectHoroscope() {
           Select: {
             activeBorderColor: "none",
             hoverBorderColor: "none",
+            optionFontSize: 18,
           },
         },
       }}

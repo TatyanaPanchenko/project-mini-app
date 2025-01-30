@@ -2,6 +2,7 @@ import React from "react";
 import "./ListEvents.css";
 
 export default function ListEvents({ events }) {
+  console.log(events);
   const addFavorite = (e) => {
     console.log(e.target);
     // setFavorite();

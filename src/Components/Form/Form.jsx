@@ -16,7 +16,11 @@ export default function Form() {
   const [horoscope, setHoroscope] = useState(false);
   const [location, setLocation] = useState({});
   console.log(location);
+  console.log(location.latitude);
   console.log(horoscope);
+  console.log(events);
+  // const lat = String(location.latitude);
+  // const long = String(location.longitude);
   const { tg } = useTelegram();
   const user = tg.initDataUnsafe.user;
   // console.log(navigator);
@@ -34,8 +38,38 @@ export default function Form() {
 
   useEffect(() => {
     filterEvents("4").then((result) => {
+      console.log(1);
       setEvents(result);
+      console.log(events);
     });
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          console.log("location is true");
+          // const location = {
+          //   latitude: position.coords.latitude,
+          //   longitude: position.coords.longitude,
+          //   accuracy: position.coords.accuracy,
+          // };
+        },
+        (error) => {
+          console.error("Ошибка получения геолокации:", error.message);
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000,
+        }
+      );
+      // Остановить отслеживание при необходимости
+      // navigator.geolocation.clearWatch(watchId);
+    } else {
+      console.error("Геолокация недоступна в этом браузере.");
+    }
   }, []);
 
   // const urlParams = new URLSearchParams(window.location.search);
@@ -46,52 +80,12 @@ export default function Form() {
   //   return userLocation;
   // }
 
-  if ("geolocation" in navigator) {
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-        // const location = {
-        //   latitude: position.coords.latitude,
-        //   longitude: position.coords.longitude,
-        //   accuracy: position.coords.accuracy,
-        // };
-      },
-      (error) => {
-        console.error("Ошибка получения геолокации:", error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 5000,
-      }
-    );
-
-    // Остановить отслеживание при необходимости
-    // navigator.geolocation.clearWatch(watchId);
-  } else {
-    console.error("Геолокация недоступна в этом браузере.");
-    // if (user) {
-    //   console.log("Геолокация не получена");
-    //   const madeFilter = filterEvents(value);
-    //   madeFilter.then((result) => {
-    //     console.log(result);
-    //     setEvents(result);
-    //     setWaiting(false);
-    //   });
-    // } else {
-    //   console.log("no user");
-    // }
-  }
-
   const onChangeTime = (value) => {
     console.log(value);
     setWaiting(true);
 
     if (user) {
-           const madeFilter = filterEvents(value, location);
+      const madeFilter = filterEvents(value, location);
       madeFilter.then((result) => {
         console.log(result);
         setEvents(result);
@@ -104,7 +98,6 @@ export default function Form() {
 
     console.log(events);
   };
-
 
   const getHoroscope = () => {
     if (!horoscope) {
@@ -135,13 +128,15 @@ export default function Form() {
         <div className={"title"}>
           Выберите время, в течении которого хотите найти ивент:
         </div>
-
+        {/* <div>{lat}</div>
+        <div>{long}</div> */}
         <ConfigProvider
           theme={{
             components: {
               Select: {
                 activeBorderColor: "none",
                 hoverBorderColor: "none",
+                optionFontSize: 18,
               },
             },
           }}
@@ -155,7 +150,7 @@ export default function Form() {
             <Select.Option value="8">8 часов</Select.Option>
             <Select.Option value="12">12 часов</Select.Option>
             <Select.Option value="24">Весь день</Select.Option>
-            <Select.Option value="480">Включая завтра</Select.Option>
+            <Select.Option value="48">Включая завтра</Select.Option>
           </Select>
         </ConfigProvider>
       </form>
@@ -164,12 +159,11 @@ export default function Form() {
           theme={{
             token: {
               colorPrimary: "#ccc",
-              controlInteractiveSize: 20,
+              controlInteractiveSize: 18,
             },
           }}
         >
           <Checkbox className={"checkbox-horoscope"} onChange={getHoroscope}>
-            {" "}
             Подобрать активности по гороскопу
           </Checkbox>
         </ConfigProvider>
@@ -181,11 +175,31 @@ export default function Form() {
       {/* <Button>Найти ивент</Button> */}
 
       {waiting ? getSpinner() : null}
-      {events.length !== 0 ? (
+      {/* {events.length !== 0 && location.latitude && location.setLocation ? (
+        <ListEvents events={events} />
+      ) : (
+        <div className={"no-events"}>
+          К сожалению, ивенты по текущей геолокации не найдены
+        </div>
+      )} */}
+      {location.latitude && location.longitude ? (
+        events.length !== 0 ? (
+          <ListEvents events={events} />
+        ) : (
+          <div className={"no-events"}>
+            К сожалению, ивенты по текущей геолокации не найдены
+          </div>
+        )
+      ) : events.length !== 0 ? (
         <ListEvents events={events} />
       ) : (
         <div className={"no-events"}>К сожалению, ивенты не найдены</div>
       )}
+      {/* {events.length !== 0 ? (
+        <ListEvents events={events} />
+      ) : (
+        <div className={"no-events"}>К сожалению, ивенты не найдены</div>
+      )} */}
     </>
   );
 }

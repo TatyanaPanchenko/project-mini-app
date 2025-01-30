@@ -25,16 +25,10 @@ export const filterEvents = async (time, location) => {
     const eventTime = new Date(item.start).getTime();
     const currentTime = new Date().getTime();
     const rangeEvents = currentTime + Number(time) * 1000 * 60 * 60;
-    // console.log(item.start);
-    // console.log(new Date(rangeEvents));
-    // console.log(new Date(eventTime));
-    // console.log(new Date(currentTime));
-    // console.log(Number(time));
-    // console.log(arrEvents);
     const itemLongitude = item.lon;
     const itemLatitude = item.lat;
     console.log(location);
-    if (location) {
+    if (location.latitude && location.longitude ) {
       const findDelta = (degrees) => {
         return (Math.PI / 180) * 6371210 * Math.cos((degrees * Math.PI) / 180);
       };
@@ -42,8 +36,15 @@ export const filterEvents = async (time, location) => {
       const currentLatitude = location.latitude;
       const deltaLatitude = 5000 / findDelta(location.latitude);
       const deltaLongitude = 5000 / findDelta(location.longitude);
+      console.log(currentLongitude, itemLongitude + deltaLongitude);
+      console.log(currentLongitude, itemLongitude - deltaLongitude);
+      console.log(currentLatitude, itemLatitude + deltaLatitude);
+
+      console.log(currentLatitude, itemLatitude - deltaLatitude);
       console.log(
-        `My location is ${currentLongitude}-${currentLatitude}, локация объекта - ${itemLongitude}- ${itemLatitude}`
+        `My location is ${currentLongitude}-${currentLatitude}, локация объекта - ${itemLongitude}- ${itemLatitude}, ${
+          currentLatitude + deltaLatitude
+        }, ${currentLongitude + deltaLongitude}`
       );
       if (
         eventTime < rangeEvents &&
@@ -59,12 +60,12 @@ export const filterEvents = async (time, location) => {
         arrEvents.push(item);
       }
     } else {
-      // if (eventTime < rangeEvents && eventTime > currentTime) {
-      //   console.log("Данные получены без геолокации");
-      //   arrEvents.push(item);
-      // } else {
-      //   console.log("Данные не получены");
-      // }
+      if (eventTime < rangeEvents && eventTime > currentTime) {
+        console.log("Данные получены без геолокации");
+        arrEvents.push(item);
+      } else {
+        console.log("Данные не получены");
+      }
     }
     console.log(arrEvents);
     return arrEvents;
